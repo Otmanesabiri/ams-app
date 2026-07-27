@@ -41,6 +41,7 @@ const goToRegister = () => {
 const goToForgot = () => {
   window.dispatchEvent(new CustomEvent('ams:navigate', { detail: { page: 'forgotPassword/ForgotPasswordPage' } }))
 }
+const rememberMe = ref(false)
 </script>
 
 <template>
@@ -52,29 +53,22 @@ const goToForgot = () => {
     </a>
 
     <!-- Login Card -->
-    <div class="w-full bg-white rounded-xl shadow-md border border-gray-200 p-8 space-y-6">
-      <h1 class="text-2xl font-semibold text-gray-900 mb-1">{{ $t('auth.signInTitle') }}</h1>
+    <UCard class="w-full">
+      <h1 class="text-2xl font-semibold text-gray-900 mb-6">{{ $t('auth.signInTitle') }}</h1>
 
-      <UAlert v-if="errorMessage" title="Error" :description="errorMessage" color="red" variant="subtle" class="bg-red-50" />
+      <UAlert v-if="errorMessage" title="Error" :description="errorMessage" color="red" variant="subtle" class="bg-red-50 mb-6" />
 
       <form @submit.prevent="handleLogin" class="space-y-6" novalidate>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('auth.username') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('auth.username')" required :error="errors.username">
           <UInput v-model="state.username" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.username }" autocomplete="username" @input="delete errors.username" />
-          <p v-if="errors.username" class="text-xs text-red-600 font-medium mt-1.5 flex items-center gap-1">{{ errors.username }}</p>
-        </div>
+        </UFormField>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('auth.password') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('auth.password')" required :error="errors.password">
           <UInput v-model="state.password" type="password" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.password }" autocomplete="current-password" @input="delete errors.password" />
-          <p v-if="errors.password" class="text-xs text-red-600 font-medium mt-1.5 flex items-center gap-1">{{ errors.password }}</p>
-        </div>
+        </UFormField>
 
         <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-[#0066cc] focus:ring-[#0066cc] border-gray-300 rounded" />
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900">{{ $t('auth.rememberMe') }}</label>
-          </div>
+          <UCheckbox v-model="rememberMe" :label="$t('auth.rememberMe')" />
           <div class="text-sm">
             <button type="button" @click="goToForgot" class="font-medium text-[#0066cc] hover:text-[#0055b3]">{{ $t('auth.forgotPassword') }}</button>
           </div>
@@ -94,6 +88,7 @@ const goToForgot = () => {
           <button type="button" @click="goToRegister" class="font-medium text-[#0066cc] hover:text-[#0055b3]">{{ $t('auth.registerNow') }}</button>
         </div>
       </div>
-    </div>
+    </UCard>
   </div>
 </template>
+

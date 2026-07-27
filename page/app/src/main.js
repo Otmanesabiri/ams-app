@@ -411,9 +411,61 @@ app.component("UForm", {
   template: `<form @submit.prevent="$emit('submit')"><slot /></form>`
 });
 
+app.component("UFormField", {
+  props: ["label", "required", "error", "description"],
+  template: `
+    <div class="space-y-1">
+      <label v-if="label" class="block text-sm font-medium text-gray-700">
+        {{ label }} <span v-if="required" class="text-red-500">*</span>
+      </label>
+      <slot />
+      <p v-if="description" class="text-xs text-gray-500">{{ description }}</p>
+      <p v-if="error" class="text-xs text-red-600 font-medium mt-1 flex items-center gap-1">{{ error }}</p>
+    </div>
+  `
+});
+
+app.component("UCheckbox", {
+  props: ["modelValue", "label", "disabled"],
+  emits: ["update:modelValue"],
+  template: `
+    <label class="inline-flex items-center gap-2 cursor-pointer text-sm text-gray-900 select-none">
+      <input type="checkbox" :checked="modelValue" :disabled="disabled" @change="$emit('update:modelValue', $event.target.checked)" class="w-4 h-4 text-[#0066cc] rounded border-gray-300 focus:ring-[#0066cc]" />
+      <span v-if="label">{{ label }}</span>
+    </label>
+  `
+});
+
+app.component("UBreadcrumb", {
+  props: ["items"],
+  template: `
+    <nav class="flex items-center gap-1.5 text-sm text-gray-500 mb-2">
+      <template v-for="(item, idx) in (items || [])" :key="idx">
+        <button v-if="item.click || item.onSelect" type="button" @click="item.click ? item.click() : item.onSelect()" class="hover:underline text-[#0066cc] font-medium">
+          {{ item.label }}
+        </button>
+        <span v-else class="font-medium text-gray-900">{{ item.label }}</span>
+        <span v-if="idx < (items.length - 1)" class="text-gray-400">›</span>
+      </template>
+    </nav>
+  `
+});
+
+app.component("UCard", {
+  template: `
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <div v-if="$slots.header" class="px-6 py-4 border-b border-gray-100"><slot name="header" /></div>
+      <div class="p-6"><slot /></div>
+      <div v-if="$slots.footer" class="px-6 py-4 bg-gray-50 border-t border-gray-100"><slot name="footer" /></div>
+    </div>
+  `
+});
+
 app.component("UApp", {
   template: `<div class="isolate min-h-screen bg-gray-50"><slot /></div>`
 });
+
+
 
 // Global spin animation
 const spinStyle = document.createElement("style");

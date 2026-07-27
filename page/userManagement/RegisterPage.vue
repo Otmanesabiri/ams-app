@@ -59,47 +59,37 @@ const goToLogin = () => {
     </a>
 
     <!-- Register Card -->
-    <div class="w-full bg-white rounded-xl shadow-md border border-gray-200 p-8 space-y-6">
-      <h1 class="text-2xl font-semibold text-gray-900 mb-1">{{ $t('auth.registerTitle') }}</h1>
+    <UCard class="w-full">
+      <h1 class="text-2xl font-semibold text-gray-900 mb-6">{{ $t('auth.registerTitle') }}</h1>
 
-      <UAlert v-if="errorMessage" title="Error" :description="errorMessage" color="red" variant="subtle" class="bg-red-50" />
-      <UAlert v-if="successMessage" title="Success" :description="successMessage" color="green" variant="subtle" class="bg-green-50" />
+      <UAlert v-if="errorMessage" title="Error" :description="errorMessage" color="red" variant="subtle" class="bg-red-50 mb-4" />
+      <UAlert v-if="successMessage" title="Success" :description="successMessage" color="green" variant="subtle" class="bg-green-50 mb-4" />
 
       <form @submit.prevent="handleRegister" class="space-y-5" novalidate>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('userForm.firstName') }}</label>
+          <UFormField :label="$t('userForm.firstName')">
             <UInput v-model="state.firstName" variant="outline" class="w-full" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('userForm.lastName') }}</label>
+          </UFormField>
+          <UFormField :label="$t('userForm.lastName')">
             <UInput v-model="state.lastName" variant="outline" class="w-full" />
-          </div>
+          </UFormField>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('userForm.username') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('userForm.username')" required :error="errors.username">
           <UInput v-model="state.username" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.username }" @input="delete errors.username" />
-          <p v-if="errors.username" class="text-xs text-red-600 mt-1">{{ errors.username }}</p>
-        </div>
+        </UFormField>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('userForm.email') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('userForm.email')" required :error="errors.email">
           <UInput v-model="state.email" type="email" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.email }" @input="delete errors.email" />
-          <p v-if="errors.email" class="text-xs text-red-600 mt-1">{{ errors.email }}</p>
-        </div>
+        </UFormField>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('auth.password') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('auth.password')" required :error="errors.password">
           <UInput v-model="state.password" type="password" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.password }" @input="delete errors.password" />
-          <p v-if="errors.password" class="text-xs text-red-600 mt-1">{{ errors.password }}</p>
-        </div>
+        </UFormField>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('auth.passwordConfirm') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('auth.passwordConfirm')" required :error="errors.passwordConfirm">
           <UInput v-model="state.passwordConfirm" type="password" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.passwordConfirm }" @input="delete errors.passwordConfirm" />
-          <p v-if="errors.passwordConfirm" class="text-xs text-red-600 mt-1">{{ errors.passwordConfirm }}</p>
-        </div>
+        </UFormField>
 
         <div class="pt-2">
           <UButton type="submit" color="primary" variant="solid" style="background-color: #0066cc;" class="w-full flex justify-center py-2.5 text-sm" :loading="loading">{{ $t('auth.registerButton') }}</UButton>
@@ -110,6 +100,7 @@ const goToLogin = () => {
         <span class="text-sm text-gray-600">{{ $t('auth.alreadyHaveAccount') }} </span>
         <button type="button" @click="goToLogin" class="font-medium text-[#0066cc] hover:text-[#0055b3]">{{ $t('auth.signInButton') }}</button>
       </div>
-    </div>
+    </UCard>
   </div>
 </template>
+

@@ -172,6 +172,34 @@ export const UDropdownMenu = {
   `
 };
 
+export const UCheckbox = {
+  name: "UCheckbox",
+  props: ["modelValue", "label", "disabled"],
+  emits: ["update:modelValue"],
+  template: `
+    <label class="inline-flex items-center gap-2 cursor-pointer text-sm text-gray-900 select-none">
+      <input type="checkbox" :checked="modelValue" :disabled="disabled" @change="$emit('update:modelValue', $event.target.checked)" class="w-4 h-4 text-[#0066cc] rounded border-gray-300 focus:ring-[#0066cc]" />
+      <span v-if="label">{{ label }}</span>
+    </label>
+  `
+};
+
+export const UBreadcrumb = {
+  name: "UBreadcrumb",
+  props: ["items"],
+  template: `
+    <nav class="flex items-center gap-1.5 text-sm text-gray-500 mb-2">
+      <template v-for="(item, idx) in (items || [])" :key="idx">
+        <button v-if="item.click || item.onSelect" type="button" @click="item.click ? item.click() : item.onSelect()" class="hover:underline text-[#0066cc] font-medium">
+          {{ item.label }}
+        </button>
+        <span v-else class="font-medium text-gray-900">{{ item.label }}</span>
+        <span v-if="idx < (items.length - 1)" class="text-gray-400">›</span>
+      </template>
+    </nav>
+  `
+};
+
 export default {
   UButton,
   UBadge,
@@ -180,5 +208,8 @@ export default {
   UInput,
   USwitch,
   UTable,
-  UDropdownMenu
+  UDropdownMenu,
+  UCheckbox,
+  UBreadcrumb
 };
+

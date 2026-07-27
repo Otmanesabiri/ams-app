@@ -128,55 +128,34 @@ onMounted(loadUsers)
         <UButton color="primary" variant="solid" style="background-color: #0066cc;" @click="createUser">+ {{ $t('userList.createUser') }}</UButton>
       </div>
 
-      <!-- Table -->
-      <div class="overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm">
-        <div v-if="loading" class="flex items-center justify-center py-12 text-gray-400 text-sm">Chargement...</div>
-        <table v-else class="w-full text-left text-sm text-gray-700">
-          <thead class="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200">
-            <tr>
-              <th class="px-6 py-3.5">{{ $t('userList.colUsername') }}</th>
-              <th class="px-6 py-3.5">{{ $t('userList.colEmail') }}</th>
-              <th class="px-6 py-3.5">{{ $t('userList.colFirstName') }}</th>
-              <th class="px-6 py-3.5">{{ $t('userList.colLastName') }}</th>
-              <th class="px-6 py-3.5">{{ $t('userList.colStatus') }}</th>
-              <th class="px-6 py-3.5">{{ $t('userList.colCreatedAt') }}</th>
-              <th class="px-6 py-3.5"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr v-if="paginatedUsers.length === 0">
-              <td colspan="7" class="px-6 py-12 text-center">
-                <div class="flex flex-col items-center justify-center text-center">
-                  <span style="font-size:2.5rem;line-height:1;margin-bottom:.75rem;color:#9ca3af;">👥</span>
-                  <h3 class="font-semibold text-gray-900">{{ $t('userList.noUsersFound') }}</h3>
-                  <p class="mt-1 text-sm text-gray-500">{{ $t('userList.noUsersMatching') }}</p>
-                </div>
-              </td>
-            </tr>
-            <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50/80 transition-colors">
-              <td class="px-6 py-4">
-                <button type="button" class="font-medium text-[#0066cc] hover:underline" @click="viewUser(user)">{{ user.username }}</button>
-              </td>
-              <td class="px-6 py-4 text-gray-600">{{ user.email }}</td>
-              <td class="px-6 py-4 text-gray-600">{{ user.firstName }}</td>
-              <td class="px-6 py-4 text-gray-600">{{ user.lastName }}</td>
-              <td class="px-6 py-4">
-                <UBadge :color="user.status === 'active' ? 'green' : 'gray'" variant="subtle">
-                  {{ user.status === 'active' ? $t('userList.active') : $t('userList.inactive') }}
-                </UBadge>
-              </td>
-              <td class="px-6 py-4 text-gray-500 text-xs">{{ user.createdAt }}</td>
-              <td class="px-6 py-4">
-                <div class="flex justify-end">
-                  <UDropdownMenu :items="getActionItems(user)" :ui="{ content: 'ring-1 ring-gray-200 border-0 shadow-md divide-y divide-gray-200', divider: 'border-gray-200' }">
-                    <UButton icon="i-heroicons-ellipsis-vertical-20-solid" color="gray" variant="ghost">⋮</UButton>
-                  </UDropdownMenu>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Table Card -->
+      <UCard class="overflow-hidden p-0">
+        <UTable :columns="columns" :data="paginatedUsers" :loading="loading">
+          <template #username-cell="{ row }">
+            <button type="button" class="font-medium text-[#0066cc] hover:underline" @click="viewUser(row.original)">{{ row.original.username }}</button>
+          </template>
+          <template #status-cell="{ row }">
+            <UBadge :color="row.original.status === 'active' ? 'green' : 'gray'" variant="subtle">
+              {{ row.original.status === 'active' ? $t('userList.active') : $t('userList.inactive') }}
+            </UBadge>
+          </template>
+          <template #actions-cell="{ row }">
+            <div class="flex justify-end">
+              <UDropdownMenu :items="getActionItems(row.original)" :ui="{ content: 'ring-1 ring-gray-200 border-0 shadow-md divide-y divide-gray-200', divider: 'border-gray-200' }">
+                <UButton icon="i-heroicons-ellipsis-vertical-20-solid" color="gray" variant="ghost">⋮</UButton>
+              </UDropdownMenu>
+            </div>
+          </template>
+          <template #empty>
+            <div class="flex flex-col items-center justify-center text-center py-6">
+              <span style="font-size:2.5rem;line-height:1;margin-bottom:.75rem;color:#9ca3af;">👥</span>
+              <h3 class="font-semibold text-gray-900">{{ $t('userList.noUsersFound') }}</h3>
+              <p class="mt-1 text-sm text-gray-500">{{ $t('userList.noUsersMatching') }}</p>
+            </div>
+          </template>
+        </UTable>
+      </UCard>
+
 
       <!-- Pagination -->
       <div v-if="filteredUsers.length > 0" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">

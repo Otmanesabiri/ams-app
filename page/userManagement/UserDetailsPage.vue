@@ -151,23 +151,27 @@ const deleteUser = async () => {
   } catch {
     errorMessage.value = 'Unable to delete the user.'
     deleteModalOpen.value = false
-  } finally {
-    deleting.value = false
-  }
-}
-
 onMounted(loadUser)
+
+const breadcrumbItems = computed(() => [
+  { label: t('userList.title'), click: goBack },
+  { label: user.value?.username || '...' }
+])
+
+const roleColumns = [
+  { accessorKey: 'name', header: 'Nom du rôle' },
+  { accessorKey: 'isComposite', header: 'Composite' },
+  { accessorKey: 'description', header: 'Description' },
+  { id: 'actions', header: '' }
+]
 </script>
+
 
 <template>
   <div class="max-w-7xl mx-auto px-2 space-y-6">
     <!-- Header -->
     <div>
-      <div class="text-sm text-gray-500 mb-2 flex items-center gap-1">
-        <button @click="goBack" class="hover:underline text-[#0066cc] font-medium">{{ $t('userList.title') }}</button>
-        <span class="text-gray-400">›</span>
-        <span class="font-medium text-gray-900">{{ user?.username || '...' }}</span>
-      </div>
+      <UBreadcrumb :items="breadcrumbItems" />
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 class="text-[28px] text-gray-900 font-medium leading-tight">{{ user?.username }}</h1>
@@ -210,7 +214,7 @@ onMounted(loadUser)
             @click="activeTab = 'roles'"
           >
             <span>Mapping des Rôles</span>
-            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-[#0066cc]">{{ assignedRoleIds.length }}</span>
+            <UBadge color="blue" variant="soft" class="text-xs">{{ assignedRoleIds.length }}</UBadge>
           </button>
           <button 
             type="button"
@@ -232,26 +236,22 @@ onMounted(loadUser)
       </div>
 
       <!-- TAB 1: DETAILS -->
-      <div v-if="activeTab === 'details'" class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <UCard v-if="activeTab === 'details'">
         <h2 class="text-base font-semibold text-gray-900 mb-1">{{ $t('userForm.generalInfo') }}</h2>
         <p class="text-sm text-gray-500 mb-6">{{ $t('userForm.generalInfoSubtitle') }}</p>
         <div class="space-y-5 max-w-2xl">
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">{{ $t('userForm.username') }} <span class="text-red-500">*</span></label>
-            <UInput v-model="user.username" :placeholder="$t('userForm.enterUsername')" variant="outline" class="flex-1" />
-          </div>
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">{{ $t('userForm.email') }} <span class="text-red-500">*</span></label>
-            <UInput v-model="user.email" type="email" :placeholder="$t('userForm.enterEmail')" variant="outline" class="flex-1" />
-          </div>
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">{{ $t('userForm.firstName') }}</label>
-            <UInput v-model="user.firstName" :placeholder="$t('userForm.enterFirstName')" variant="outline" class="flex-1" />
-          </div>
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">{{ $t('userForm.lastName') }}</label>
-            <UInput v-model="user.lastName" :placeholder="$t('userForm.enterLastName')" variant="outline" class="flex-1" />
-          </div>
+          <UFormField :label="$t('userForm.username')" required>
+            <UInput v-model="user.username" :placeholder="$t('userForm.enterUsername')" variant="outline" class="w-full" />
+          </UFormField>
+          <UFormField :label="$t('userForm.email')" required>
+            <UInput v-model="user.email" type="email" :placeholder="$t('userForm.enterEmail')" variant="outline" class="w-full" />
+          </UFormField>
+          <UFormField :label="$t('userForm.firstName')">
+            <UInput v-model="user.firstName" :placeholder="$t('userForm.enterFirstName')" variant="outline" class="w-full" />
+          </UFormField>
+          <UFormField :label="$t('userForm.lastName')">
+            <UInput v-model="user.lastName" :placeholder="$t('userForm.enterLastName')" variant="outline" class="w-full" />
+          </UFormField>
           <div class="flex items-center justify-between py-3 border-y border-gray-100">
             <div>
               <span class="text-sm font-medium text-gray-900">{{ $t('userForm.userEnabled') }}</span>
@@ -272,10 +272,10 @@ onMounted(loadUser)
           <UButton color="primary" variant="solid" style="background-color: #0066cc;" :loading="saving" @click="saveUser">{{ $t('userForm.save') }}</UButton>
           <UButton variant="ghost" style="color: #0066cc;" @click="goBack">{{ $t('userForm.cancel') }}</UButton>
         </div>
-      </div>
+      </UCard>
 
       <!-- TAB 2: ROLE MAPPING (Keycloak Style) -->
-      <div v-if="activeTab === 'roles'" class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm space-y-6">
+      <UCard v-if="activeTab === 'roles'" class="space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-gray-100">
           <div>
             <h2 class="text-base font-semibold text-gray-900 mb-1">Rôles attribués à l'utilisateur</h2>
@@ -287,58 +287,48 @@ onMounted(loadUser)
         </div>
 
         <!-- Assigned Roles Table -->
-        <div v-if="assignedRolesList.length > 0" class="overflow-x-auto border border-gray-200 rounded-lg">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-gray-50 text-xs uppercase text-gray-500 border-b border-gray-200">
-              <tr>
-                <th class="px-4 py-3 font-semibold">Nom du rôle</th>
-                <th class="px-4 py-3 font-semibold">Composite</th>
-                <th class="px-4 py-3 font-semibold">Description</th>
-                <th class="px-4 py-3 font-semibold text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="role in assignedRolesList" :key="role.id" class="hover:bg-gray-50 transition-colors">
-                <td class="px-4 py-3 font-medium text-gray-900">{{ role.name }}</td>
-                <td class="px-4 py-3">
-                  <UBadge :color="role.isComposite ? 'blue' : 'gray'" variant="soft" class="text-xs">
-                    {{ role.isComposite ? 'Vrai' : 'Faux' }}
-                  </UBadge>
-                </td>
-                <td class="px-4 py-3 text-gray-500 text-xs">{{ role.description || '—' }}</td>
-                <td class="px-4 py-3 text-right">
-                  <UButton color="red" variant="ghost" size="xs" @click="handleUnassignRole(role.id)">
-                    Retirer
-                  </UButton>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <UTable v-if="assignedRolesList.length > 0" :columns="roleColumns" :data="assignedRolesList" class="border border-gray-200 rounded-lg">
+          <template #name-cell="{ row }">
+            <span class="font-medium text-gray-900">{{ row.original.name }}</span>
+          </template>
+          <template #isComposite-cell="{ row }">
+            <UBadge :color="row.original.isComposite ? 'blue' : 'gray'" variant="soft" class="text-xs">
+              {{ row.original.isComposite ? 'Vrai' : 'Faux' }}
+            </UBadge>
+          </template>
+          <template #description-cell="{ row }">
+            <span class="text-gray-500 text-xs">{{ row.original.description || '—' }}</span>
+          </template>
+          <template #actions-cell="{ row }">
+            <div class="text-right">
+              <UButton color="red" variant="ghost" size="xs" @click="handleUnassignRole(row.original.id)">
+                Retirer
+              </UButton>
+            </div>
+          </template>
+        </UTable>
 
         <div v-else class="text-center py-10 border-2 border-dashed border-gray-200 rounded-lg">
           <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
           <p class="text-sm font-medium text-gray-600">Aucun rôle n'est actuellement assigné à cet utilisateur.</p>
           <p class="text-xs text-gray-400 mt-1">Cliquez sur le bouton ci-dessus pour attribuer un ou plusieurs rôles.</p>
         </div>
-      </div>
+      </UCard>
 
       <!-- TAB 3: CREDENTIALS -->
-      <div v-if="activeTab === 'credentials'" class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm space-y-6 max-w-3xl">
+      <UCard v-if="activeTab === 'credentials'" class="space-y-6 max-w-3xl">
         <div>
           <h2 class="text-base font-semibold text-gray-900 mb-1">Réinitialisation du mot de passe</h2>
           <p class="text-sm text-gray-500">Définissez un nouveau mot de passe pour le compte utilisateur.</p>
         </div>
 
         <div class="space-y-5">
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">Nouveau mot de passe</label>
-            <UInput v-model="passwordForm.newPassword" type="password" placeholder="Saisir le nouveau mot de passe" variant="outline" class="flex-1" />
-          </div>
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label class="w-48 text-sm font-medium text-gray-700 shrink-0">Confirmer le mot de passe</label>
-            <UInput v-model="passwordForm.confirmPassword" type="password" placeholder="Confirmer le mot de passe" variant="outline" class="flex-1" />
-          </div>
+          <UFormField label="Nouveau mot de passe">
+            <UInput v-model="passwordForm.newPassword" type="password" placeholder="Saisir le nouveau mot de passe" variant="outline" class="w-full" />
+          </UFormField>
+          <UFormField label="Confirmer le mot de passe">
+            <UInput v-model="passwordForm.confirmPassword" type="password" placeholder="Confirmer le mot de passe" variant="outline" class="w-full" />
+          </UFormField>
           <div class="flex items-center justify-between py-3 border-y border-gray-100">
             <div>
               <span class="text-sm font-medium text-gray-900">Mot de passe temporaire</span>
@@ -353,10 +343,10 @@ onMounted(loadUser)
             </UButton>
           </div>
         </div>
-      </div>
+      </UCard>
 
       <!-- TAB 4: GROUPS -->
-      <div v-if="activeTab === 'groups'" class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm space-y-6">
+      <UCard v-if="activeTab === 'groups'" class="space-y-6">
         <div>
           <h2 class="text-base font-semibold text-gray-900 mb-1">Appartenance aux groupes</h2>
           <p class="text-sm text-gray-500">Gérez les groupes Keycloak auxquels cet utilisateur appartient.</p>
@@ -365,7 +355,7 @@ onMounted(loadUser)
         <div class="text-center py-10 border-2 border-dashed border-gray-200 rounded-lg">
           <p class="text-sm font-medium text-gray-600">Aucun groupe associé pour le moment.</p>
         </div>
-      </div>
+      </UCard>
     </div>
 
     <!-- Modal Assigner des Rôles -->
@@ -429,3 +419,4 @@ onMounted(loadUser)
     </UModal>
   </div>
 </template>
+
