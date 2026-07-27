@@ -40,11 +40,11 @@ const goToLogin = () => {
     </a>
 
     <!-- Forgot Password Card -->
-    <div class="w-full bg-white rounded-xl shadow-md border border-gray-200 p-8 space-y-6">
+    <UCard class="w-full">
       <h1 class="text-2xl font-semibold text-gray-900 mb-1">{{ $t('auth.forgotPassword') }}</h1>
       <p class="text-sm text-gray-500 mb-6">{{ $t('auth.forgotPasswordDesc') }}</p>
 
-      <UAlert v-if="error" title="Error" :description="error" color="red" variant="subtle" class="bg-red-50" />
+      <UAlert v-if="error" title="Error" :description="error" color="red" variant="subtle" class="bg-red-50 mb-6" />
       
       <div v-if="success" class="text-center py-4">
         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -58,10 +58,9 @@ const goToLogin = () => {
       </div>
 
       <form v-else @submit.prevent="handleReset" class="space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('auth.emailAddress') }} <span class="text-red-500">*</span></label>
+        <UFormField :label="$t('auth.emailAddress')" required :error="error">
           <UInput v-model="email" type="email" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': error }" @input="error = ''" />
-        </div>
+        </UFormField>
 
         <div>
           <UButton type="submit" color="primary" variant="solid" style="background-color: #0066cc;" class="w-full flex justify-center py-2.5 text-sm" :loading="loading">{{ $t('auth.sendResetLink') }}</UButton>
@@ -74,6 +73,7 @@ const goToLogin = () => {
           {{ $t('auth.backToLogin') }}
         </button>
       </div>
-    </div>
+    </UCard>
   </div>
 </template>
+

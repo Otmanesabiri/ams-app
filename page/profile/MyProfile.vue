@@ -41,9 +41,9 @@ const cancelChanges = () => {
       <UAlert v-if="error" title="Error" :description="error" color="red" variant="subtle" class="bg-red-50" />
     </div>
 
-    <!-- Form Section -->
-    <div class="flex flex-col lg:flex-row gap-12">
-      <div class="flex-1">
+    <!-- Form Section Card -->
+    <UCard>
+      <div class="max-w-2xl">
         <h2 class="text-xl font-medium text-gray-900 mb-6">{{ $t('profile.general') }}</h2>
         
         <div v-if="isLoading" class="flex items-center justify-center py-12 text-gray-400">
@@ -51,30 +51,31 @@ const cancelChanges = () => {
         </div>
         
         <form v-else @submit.prevent="saveProfile" class="space-y-6">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">{{ $t('profile.username') }}</label>
+          <UFormField :label="$t('profile.username')">
             <UInput v-model="profile.username" variant="outline" class="w-full" />
-          </div>
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">{{ $t('profile.email') }}</label>
+          </UFormField>
+
+          <UFormField :label="$t('profile.email')">
             <UInput v-model="profile.email" type="email" variant="outline" class="w-full" />
-          </div>
+          </UFormField>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.firstName') }}</label>
+            <UFormField :label="$t('profile.firstName')">
               <UInput v-model="profile.firstName" variant="outline" class="w-full" />
-            </div>
-            <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.lastName') }}</label>
+            </UFormField>
+
+            <UFormField :label="$t('profile.lastName')">
               <UInput v-model="profile.lastName" variant="outline" class="w-full" />
-            </div>
+            </UFormField>
           </div>
-          <div class="flex gap-4 pt-2">
+
+          <div class="flex gap-4 pt-4">
             <UButton type="submit" color="primary" variant="solid" style="background-color: #0066cc;" :loading="isLoading">{{ $t('profile.save') }}</UButton>
             <UButton type="button" variant="ghost" style="color: #0066cc;" @click="cancelChanges">{{ $t('profile.cancel') }}</UButton>
           </div>
         </form>
       </div>
-    </div>
+    </UCard>
   </div>
 </template>
+

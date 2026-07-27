@@ -53,56 +53,38 @@ const submit = async () => {
   } catch (e) {
     toast.add({ title: 'Error', description: 'Operation failed.', color: 'red' })
   }
-}
+const breadcrumbItems = computed(() => [
+  { label: t('roleCreate.breadcrumbRealmRoles'), click: goBack },
+  { label: isEditMode ? t('roleList.update') : t('roleCreate.breadcrumbCreateRole') }
+])
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto px-2">
+  <div class="max-w-6xl mx-auto px-2 space-y-6">
     <!-- Breadcrumb -->
-    <nav class="text-sm text-gray-600 mb-4 flex items-center">
-      <button @click="goBack" class="text-[#0066cc] hover:underline">{{ $t('roleCreate.breadcrumbRealmRoles') }}</button>
-      <span class="mx-2 text-gray-400">
-        <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-      </span>
-      <span>{{ isEditMode ? $t('roleList.update') : $t('roleCreate.breadcrumbCreateRole') }}</span>
-    </nav>
+    <UBreadcrumb :items="breadcrumbItems" />
 
     <!-- Header -->
     <h1 class="text-2xl font-medium text-gray-900 mb-4">{{ isEditMode ? $t('roleList.update') : $t('roleCreate.title') }}</h1>
 
-    <!-- Form Section -->
-    <div class="border-t border-gray-200 pt-8 mt-2">
-      <form @submit.prevent="submit" class="space-y-8" novalidate>
-        <!-- Role name -->
-        <div class="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-0">
-          <label class="w-64 text-[14px] font-bold text-gray-900 flex items-center pt-2">
-            {{ $t('roleCreate.roleName') }} <span class="text-red-500 ml-1 text-xs">*</span>
-          </label>
-          <div class="flex-1 max-w-3xl">
-            <UInput v-model="state.name" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.name }" @input="delete errors.name" />
-            <p v-if="errors.name" class="text-xs text-red-600 font-medium mt-1.5 flex items-center gap-1">
-              <svg class="w-3.5 h-3.5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              {{ errors.name }}
-            </p>
+    <!-- Form Card -->
+    <UCard>
+      <form @submit.prevent="submit" class="space-y-6 max-w-3xl" novalidate>
+        <UFormField :label="$t('roleCreate.roleName')" required :error="errors.name">
+          <UInput v-model="state.name" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.name }" @input="delete errors.name" />
+        </UFormField>
+
+        <div class="flex items-center justify-between py-3 border-y border-gray-100">
+          <div>
+            <span class="text-sm font-medium text-gray-900">Rôle Composite</span>
+            <p class="text-xs text-gray-500 mt-0.5">Un rôle composite contient d'autres sous-rôles associés.</p>
           </div>
+          <USwitch v-model="state.isComposite" />
         </div>
 
-        <!-- Composite Role toggle -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0">
-          <label class="w-64 text-[14px] font-bold text-gray-900">Rôle Composite</label>
-          <div class="flex-1 max-w-3xl flex items-center gap-3">
-            <USwitch v-model="state.isComposite" />
-            <span class="text-xs text-gray-500">Un rôle composite contient d'autres sous-rôles associés.</span>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-0">
-          <label class="w-64 text-[14px] font-bold text-gray-900 pt-2">{{ $t('roleCreate.description') }}</label>
-          <div class="flex-1 max-w-3xl">
-            <UTextarea v-model="state.description" :rows="4" variant="outline" class="w-full" />
-          </div>
-        </div>
+        <UFormField :label="$t('roleCreate.description')">
+          <UTextarea v-model="state.description" :rows="4" variant="outline" class="w-full" />
+        </UFormField>
 
         <!-- Actions -->
         <div class="pt-4 flex gap-4">
@@ -110,6 +92,7 @@ const submit = async () => {
           <UButton type="button" variant="ghost" style="color: #0066cc;" @click="goBack">{{ $t('roleCreate.cancel') }}</UButton>
         </div>
       </form>
-    </div>
+    </UCard>
   </div>
 </template>
+

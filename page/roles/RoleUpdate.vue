@@ -18,7 +18,7 @@ const state = reactive({
   composite: false
 })
 
-const errors = reactive<Record<string, string>>({})
+const errors = reactive({})
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Role name is required'),
@@ -26,7 +26,7 @@ const schema = z.object({
   composite: z.boolean().optional()
 })
 
-const validate = (): boolean => {
+const validate = () => {
   Object.keys(errors).forEach(key => delete errors[key])
 
   const result = schema.safeParse(state)
@@ -53,12 +53,14 @@ onMounted(async () => {
   }
 })
 
-const submit = async () => {
-  if (!validate()) {
-    return
-  }
+const goBack = () => {
+  window.dispatchEvent(new CustomEvent('ams:navigate', { detail: { page: 'roles/RoleList' } }))
+}
 
-  const payload: RolePayload = {
+const submit = async () => {
+  if (!validate()) return
+
+  const payload = {
     name: state.name.trim(),
     description: state.description.trim(),
     composite: state.composite
@@ -69,82 +71,47 @@ const submit = async () => {
     description: 'Role updated successfully.',
     color: 'green'
   })
-  window.dispatchEvent(new CustomEvent('ams:navigate', { detail: { page: 'roles/RoleList' } }))
+  goBack()
 }
+
+const breadcrumbItems = computed(() => [
+  { label: t('roleList.title'), click: goBack },
+  { label: state.name || '...' }
+])
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-2">
+  <div class="max-w-7xl mx-auto px-2 space-y-6">
+    <!-- Breadcrumb -->
+    <UBreadcrumb :items="breadcrumbItems" />
+
     <!-- Header Section -->
-    <div class="mb-6">
-      <div class="text-sm text-gray-500 mb-2">
-        <a href="#" @click.prevent="window.dispatchEvent(new CustomEvent('ams:navigate', { detail: { page: 'roles/RoleList' } }))" class="hover:underline text-[#0066cc]">{{ $t('roleList.title') }}</a>
-        <span class="mx-2">&gt;</span>
-        <span class="font-medium text-gray-900">{{ state.name || '...' }}</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <h1 class="text-[28px] text-gray-900 font-medium">{{ $t('roleList.update') }}: {{ state.name }}</h1>
-      </div>
+    <div class="mb-4">
+      <h1 class="text-[28px] text-gray-900 font-medium">{{ $t('roleList.update') }}: {{ state.name }}</h1>
     </div>
 
-    <!-- Form Section -->
-    <div class="border-t border-gray-200 pt-8 mt-2">
-      <form @submit.prevent="submit" class="space-y-8" novalidate>
-        <!-- Role name -->
-        <div class="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-0">
-          <label class="w-64 text-sm font-medium text-gray-700 pt-2">
-            {{ $t('roleCreate.roleName') }} <span class="text-red-500 ml-1 text-xs">*</span>
-          </label>
-          <div class="flex-1 max-w-3xl">
-            <UInput 
-              v-model="state.name" 
-              variant="outline"
-              class="w-full"
-              :class="{ 'ring-2 ring-red-500 border-red-500': errors.name }"
-              @input="delete errors.name"
-            />
-            <p v-if="errors.name" class="text-xs text-red-600 font-medium mt-1.5 flex items-center gap-1">
-              <svg class="w-3.5 h-3.5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              {{ errors.name }}
-            </p>
-          </div>
-        </div>
+    <!-- Form Card -->
+    <UCard>
+      <form @submit.prevent="submit" class="space-y-6 max-w-3xl" novalidate>
+        <UFormField :label="$t('roleCreate.roleName')" required :error="errors.name">
+          <UInput v-model="state.name" variant="outline" class="w-full" :class="{ 'ring-2 ring-red-500 border-red-500': errors.name }" @input="delete errors.name" />
+        </UFormField>
 
-        <!-- Description -->
-        <div class="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-0">
-          <label class="w-64 text-sm font-medium text-gray-700 pt-2">
-            {{ $t('roleCreate.description') }}
-          </label>
-          <div class="flex-1 max-w-3xl">
-            <UTextarea 
-              v-model="state.description" 
-              :rows="4"
-              variant="outline"
-              class="w-full"
-            />
-          </div>
-        </div>
+        <UFormField :label="$t('roleCreate.description')">
+          <UTextarea v-model="state.description" :rows="4" variant="outline" class="w-full" />
+        </UFormField>
 
         <!-- Actions -->
         <div class="pt-4 flex gap-4">
-          <UButton 
-            type="submit" 
-            color="primary"
-            variant="solid"
-            style="background-color: #0066cc;"
-            :loading="isLoading"
-          >
+          <UButton type="submit" color="primary" variant="solid" style="background-color: #0066cc;" :loading="isLoading">
             {{ $t('userForm.save') }}
           </UButton>
-          <UButton 
-            to="/admin/roles"
-            variant="ghost"
-            style="color: #0066cc;"
-          >
+          <UButton type="button" variant="ghost" style="color: #0066cc;" @click="goBack">
             {{ $t('userForm.cancel') }}
           </UButton>
         </div>
       </form>
-    </div>
+    </UCard>
   </div>
 </template>
+

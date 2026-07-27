@@ -70,39 +70,35 @@ const getItems = (row) => [
         </div>
       </div>
 
-      <!-- Table -->
-      <div class="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
-        <div v-if="isLoading" class="flex items-center justify-center py-12 text-gray-400 text-sm">Chargement...</div>
-        <table v-else class="w-full text-left text-sm text-gray-700">
-          <thead class="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200">
-            <tr>
-              <th class="px-6 py-3.5">{{ $t('roleList.colRoleName') }}</th>
-              <th class="px-6 py-3.5">{{ $t('roleList.colComposite') }}</th>
-              <th class="px-6 py-3.5">{{ $t('roleList.colDescription') }}</th>
-              <th class="px-6 py-3.5"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr v-if="filteredRoles.length === 0">
-              <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-sm">Aucun rôle trouvé.</td>
-            </tr>
-            <tr v-for="role in filteredRoles" :key="role.id" class="hover:bg-gray-50/80 transition-colors">
-              <td class="px-6 py-4">
-                <button @click="navigateToRole(role.id)" class="flex items-center gap-1 text-[#0066cc] font-medium hover:underline cursor-pointer">{{ role.name }}</button>
-              </td>
-              <td class="px-6 py-4 text-gray-600">{{ role.isComposite ? $t('roleList.true') : $t('roleList.false') }}</td>
-              <td class="px-6 py-4 text-gray-500 text-xs">{{ role.description }}</td>
-              <td class="px-6 py-4">
-                <div class="flex justify-end">
-                  <UDropdownMenu :items="getItems(role)" :ui="{ content: 'ring-1 ring-gray-200 border-0 shadow-md divide-y divide-gray-200', divider: 'border-gray-200' }">
-                    <UButton color="gray" variant="ghost">⋮</UButton>
-                  </UDropdownMenu>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Table Card -->
+      <UCard class="overflow-hidden p-0">
+        <UTable :columns="columns" :data="filteredRoles" :loading="isLoading">
+          <template #name-cell="{ row }">
+            <button @click="navigateToRole(row.original.id)" class="flex items-center gap-1 text-[#0066cc] font-medium hover:underline cursor-pointer">{{ row.original.name }}</button>
+          </template>
+          <template #isComposite-cell="{ row }">
+            <UBadge :color="row.original.isComposite ? 'blue' : 'gray'" variant="soft" class="text-xs">
+              {{ row.original.isComposite ? $t('roleList.true') : $t('roleList.false') }}
+            </UBadge>
+          </template>
+          <template #description-cell="{ row }">
+            <span class="text-gray-500 text-xs">{{ row.original.description || '—' }}</span>
+          </template>
+          <template #actions-cell="{ row }">
+            <div class="flex justify-end">
+              <UDropdownMenu :items="getItems(row.original)" :ui="{ content: 'ring-1 ring-gray-200 border-0 shadow-md divide-y divide-gray-200', divider: 'border-gray-200' }">
+                <UButton color="gray" variant="ghost">⋮</UButton>
+              </UDropdownMenu>
+            </div>
+          </template>
+          <template #empty>
+            <div class="py-12 text-center text-gray-400 text-sm">
+              Aucun rôle trouvé.
+            </div>
+          </template>
+        </UTable>
+      </UCard>
     </div>
   </div>
 </template>
+
