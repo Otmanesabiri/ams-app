@@ -1,0 +1,15 @@
+{
+    "defaultUrl": "/home",
+    "security": {
+        "provider": "nimbus",
+        "encryptionKey": "rb50a5pXrgw6a4qx",
+        "keycloakBaseUrl": "http://127.0.0.1:8080",
+        "realm": "master",
+        "discoveryUri": "http://127.0.0.1:8080/realms/master/.well-known/openid-configuration",
+        "clientId": "test_client",
+        "clientSecret": "TX3otV9o2yhZvA8FYDRooQz6p60DzLVA",
+        "callBackUri": "http://127.0.0.1:8081/callback",
+        "preferredJwsAlgorithm": "RS256",
+        "logoutUrl": ""
+    }
+}

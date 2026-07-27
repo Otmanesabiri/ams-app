@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PayOS UI - AMS</title>
+  <!-- base href : ancre tous les chemins relatifs sur /ams-app/page/
+       Indispensable pour que CSS et JS se chargent correctement
+       même quand l'URL est /ams-app/page/roles/RoleList (sous-chemin) -->
+  <base href="/ams-app/page/" />
+  <!-- Tailwind CSS Local (Compatible avec la politique CSP style-src 'self') -->
+  <link rel="stylesheet" href="app/vendor/tailwind.min.css" />
+</head>
+<body>
+  <div id="app">Chargement de l'application…</div>
+
+  <script type="module" src="app/src/main.js"></script>
+</body>
+</html>

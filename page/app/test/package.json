@@ -1,0 +1,12 @@
+{
+  "name": "payos-vue-app-tests",
+  "private": true,
+  "type": "module",
+  "description": "Test de fumée (smoke test) pour l'application pure Vue — simule le backend Java et vérifie le rendu réel via jsdom, y compris la compilation à la volée des .vue par vue3-sfc-loader. Ne fait pas partie de l'application livrée : uniquement un outil de vérification pour les développeurs.",
+  "scripts": {
+    "test": "node harness-sfc.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0"
+  }
+}

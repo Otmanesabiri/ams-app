@@ -1,0 +1,7 @@
+[
+    { "id": "dashboard",  "label": "Tableau de bord", "page": "dashboard" },
+    { "id": "users",      "label": "Utilisateurs",      "page": "users" },
+    { "id": "roles",      "label": "Rôles & Permissions", "page": "roles" },
+    { "id": "parameters", "label": "Paramètres",       "page": "parameters" },
+    { "id": "profile",    "label": "Mon Profil",        "page": "profile" }
+]

@@ -1,0 +1,69 @@
+{
+    "routes": [
+        {
+            "path": "/",
+            "component": "index",
+            "extension": ".html"
+        },
+        {
+            "path": "/dashboard",
+            "component": "dashboard/amsDashboard",
+            "extension": ".vue"
+        },
+        {
+            "path": "/users",
+            "component": "userManagement/UsersPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/users/create",
+            "component": "userManagement/CreateUserPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/users/details",
+            "component": "userManagement/UserDetailsPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/login",
+            "component": "userManagement/LoginPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/register",
+            "component": "userManagement/RegisterPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/forgot-password",
+            "component": "forgotPassword/ForgotPasswordPage",
+            "extension": ".vue"
+        },
+        {
+            "path": "/roles",
+            "component": "roles/RoleList",
+            "extension": ".vue"
+        },
+        {
+            "path": "/roles/create",
+            "component": "roles/RoleCreate",
+            "extension": ".vue"
+        },
+        {
+            "path": "/roles/update",
+            "component": "roles/RoleUpdate",
+            "extension": ".vue"
+        },
+        {
+            "path": "/parameters",
+            "component": "paramettre/amsParamettre",
+            "extension": ".vue"
+        },
+        {
+            "path": "/profile",
+            "component": "profile/MyProfile",
+            "extension": ".vue"
+        }
+    ]
+}
