@@ -4,15 +4,18 @@
     <header v-if="!isAuthPage" class="bg-gray-900 text-white h-16 flex items-center justify-between px-6 sticky top-0 z-20 shadow-md">
       <div class="flex items-center gap-4">
         <!-- Mobile hamburger menu button -->
-        <button 
+        <UButton 
+          icon="i-heroicons-bars-3-20-solid"
+          color="gray"
+          variant="ghost"
           @click="mobileMenuOpen = !mobileMenuOpen" 
-          class="p-1.5 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md lg:hidden transition-colors"
+          class="lg:hidden text-gray-300 hover:text-white"
           title="Menu Navigation"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
-        </button>
+        </UButton>
 
         <!-- Logo -->
         <a href="#" @click.prevent="loadPage('dashboard/amsDashboard'); mobileMenuOpen = false;" class="flex items-center gap-2 font-bold text-xl tracking-tight text-white hover:opacity-90">
@@ -24,31 +27,33 @@
       <!-- Right Header Actions -->
       <div class="flex items-center gap-4">
         <!-- Language button -->
-        <button 
-          @click="toggleLanguage" 
-          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-700 rounded-full transition-colors"
+        <UButton 
+          variant="ghost" 
+          color="gray"
+          size="xs"
+          class="text-gray-300 hover:text-white border border-gray-700 rounded-full px-3 py-1"
+          @click="toggleLanguage"
         >
-          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-          </svg>
-          <span>{{ currentLang }}</span>
-        </button>
+          <template #default>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+              </svg>
+              <span>{{ currentLang }}</span>
+            </span>
+          </template>
+        </UButton>
 
-        <!-- User profile menu -->
-        <div class="relative" ref="userMenuRef">
-          <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-2 text-sm font-medium text-gray-200 cursor-pointer hover:text-white">
+        <!-- User profile dropdown menu -->
+        <UDropdownMenu :items="userMenuItems">
+          <button class="flex items-center gap-2 text-sm font-medium text-gray-200 cursor-pointer hover:text-white">
             <span class="text-xs text-gray-400">admin</span>
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             <div class="w-8 h-8 rounded-full bg-gray-700 border border-gray-600 flex items-center justify-center">
               <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
             </div>
           </button>
-          <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-gray-200 z-50 overflow-hidden">
-            <button @click="loadPage('profile/MyProfile'); userMenuOpen = false; mobileMenuOpen = false;" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Mon Profil</button>
-            <div class="border-t border-gray-100"></div>
-            <button @click="userMenuOpen = false" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Se déconnecter</button>
-          </div>
-        </div>
+        </UDropdownMenu>
       </div>
     </header>
 
@@ -129,9 +134,7 @@
           <div style="display:inline-block;animation:spin 1s linear infinite;width:2rem;height:2rem;border:3px solid #e5e7eb;border-top-color:#0066cc;border-radius:50%;" class="mr-3"></div>
           Chargement de la page...
         </div>
-        <div v-else-if="errorMessage" class="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 text-sm font-medium">
-          {{ errorMessage }}
-        </div>
+        <UAlert v-else-if="errorMessage" title="Erreur de chargement" :description="errorMessage" color="red" variant="subtle" class="mb-4" />
         <component :is="currentPage" v-else />
       </main>
     </div>
@@ -140,24 +143,16 @@
     <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 w-80 max-w-[calc(100vw-2rem)] pointer-events-none">
       <div 
         v-for="t in toasts" 
-        :key="t.id" 
-        class="pointer-events-auto p-4 rounded-lg shadow-xl border text-sm flex items-start gap-3 transition-all"
-        :class="{
-          'border-green-300 bg-green-50 text-green-900': t.color === 'green',
-          'border-red-300 bg-red-50 text-red-900': t.color === 'red',
-          'border-blue-300 bg-blue-50 text-blue-900': t.color === 'blue',
-          'border-gray-200 bg-white text-gray-900': !t.color || t.color === 'gray'
-        }"
+        :key="t.id"
+        class="pointer-events-auto"
       >
-        <svg v-if="t.color === 'green'" class="w-5 h-5 text-green-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <svg v-else-if="t.color === 'red'" class="w-5 h-5 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <div class="flex-1">
-          <h4 class="font-semibold text-[14px]" v-if="t.title">{{ t.title }}</h4>
-          <p v-if="t.description" class="text-xs opacity-90 mt-0.5">{{ t.description }}</p>
-        </div>
-        <button @click="removeToast(t.id)" class="text-gray-400 hover:text-gray-600 p-0.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <UAlert 
+          :title="t.title" 
+          :description="t.description" 
+          :color="t.color || 'gray'" 
+          variant="subtle"
+          class="shadow-xl"
+        />
       </div>
     </div>
   </div>
@@ -201,6 +196,11 @@ export default {
       }
       loadPage(pageName);
     }
+
+    const userMenuItems = computed(() => [
+      [{ label: 'Mon Profil', onSelect: () => { navigate('profile/MyProfile'); mobileMenuOpen.value = false; } }],
+      [{ label: 'Se déconnecter', onSelect: () => {} }]
+    ]);
 
     onMounted(() => {
       (async () => {
@@ -255,9 +255,11 @@ export default {
       toggleLanguage,
       userMenuOpen,
       mobileMenuOpen,
+      userMenuItems,
       toasts,
       removeToast,
     };
   },
 };
 </script>
+
