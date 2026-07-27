@@ -147,10 +147,14 @@ const deleteUser = async () => {
   try {
     await userService.deleteUser(user.value.id)
     toast.add({ title: 'Succès', description: 'Utilisateur supprimé avec succès.', color: 'green' })
-    goBack()
   } catch {
     errorMessage.value = 'Unable to delete the user.'
     deleteModalOpen.value = false
+  } finally {
+    deleting.value = false
+  }
+}
+
 onMounted(loadUser)
 
 const breadcrumbItems = computed(() => [

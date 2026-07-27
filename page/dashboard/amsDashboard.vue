@@ -24,6 +24,8 @@ const rangeOptions = [
   { key: 'day', label: t('dashboard.day') },
   { key: 'week', label: t('dashboard.week') },
   { key: 'month', label: t('dashboard.month') },
+]
+
 const eventColumns = computed(() => [
   { accessorKey: 'realm', header: t('dashboard.colRealm') },
   { accessorKey: 'event', header: t('dashboard.colEvent') },
@@ -32,6 +34,7 @@ const eventColumns = computed(() => [
   { accessorKey: 'status', header: t('dashboard.colStatus') }
 ])
 </script>
+
 
 <template>
   <div class="max-w-7xl mx-auto px-2 space-y-6">

@@ -53,6 +53,8 @@ const submit = async () => {
   } catch (e) {
     toast.add({ title: 'Error', description: 'Operation failed.', color: 'red' })
   }
+}
+
 const breadcrumbItems = computed(() => [
   { label: t('roleCreate.breadcrumbRealmRoles'), click: goBack },
   { label: isEditMode ? t('roleList.update') : t('roleCreate.breadcrumbCreateRole') }
