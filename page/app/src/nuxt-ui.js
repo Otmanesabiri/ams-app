@@ -61,7 +61,7 @@ export const UAlert = {
 
 export const UInput = {
   name: "UInput",
-  props: ["modelValue", "type", "placeholder", "autocomplete"],
+  props: ["modelValue", "type", "placeholder", "autocomplete", "disabled"],
   emits: ["update:modelValue", "input"],
   template: `
     <input 
@@ -69,11 +69,14 @@ export const UInput = {
       :placeholder="placeholder" 
       :value="modelValue" 
       :autocomplete="autocomplete"
+      :disabled="disabled"
       class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:border-[#0066cc]" 
+      :style="{ backgroundColor: disabled ? '#f9fafb' : '#ffffff', color: disabled ? '#6b7280' : '#111827' }"
       @input="$emit('update:modelValue', $event.target.value); $emit('input', $event)" 
     />
   `
 };
+
 
 export const USwitch = {
   name: "USwitch",
